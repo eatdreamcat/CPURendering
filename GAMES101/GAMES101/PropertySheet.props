@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros">
+    <OPENCV_INCLUDE_ROOT>D:\OpenCV\opencv\build\include</OPENCV_INCLUDE_ROOT>
+    <OPENCV_INCLUDE_OPENCV2>D:\OpenCV\opencv\build\include\opencv2</OPENCV_INCLUDE_OPENCV2>
+    <OPENCV_LIB_X64_VC16_LIB>D:\OpenCV\opencv\build\x64\vc16\lib</OPENCV_LIB_X64_VC16_LIB>
+    <OPENCV_BIN>D:\OpenCV\opencv\build\x64\vc16\bin</OPENCV_BIN>
+  </PropertyGroup>
+  <PropertyGroup />
+  <ItemDefinitionGroup />
+  <ItemGroup>
+    <BuildMacro Include="OPENCV_INCLUDE_ROOT">
+      <Value>$(OPENCV_INCLUDE_ROOT)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="OPENCV_INCLUDE_OPENCV2">
+      <Value>$(OPENCV_INCLUDE_OPENCV2)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="OPENCV_LIB_X64_VC16_LIB">
+      <Value>$(OPENCV_LIB_X64_VC16_LIB)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="OPENCV_BIN">
+      <Value>$(OPENCV_BIN)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+  </ItemGroup>
+</Project>

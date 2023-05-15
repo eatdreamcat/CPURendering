@@ -2,10 +2,43 @@
 //
 
 #include <iostream>
+#include<opencv.hpp>
+#include <direct.h>
+
+
+std::string current_working_directory()
+{
+    char buff[512];
+    _getcwd(buff, 512);
+    std::string current_working_directory(buff);
+    return current_working_directory;// .substr(0, current_working_directory.rfind("\\"));
+}
 
 int main()
 {
-    std::cout << "Hello World!\n";
+	{
+		using namespace std;
+		using namespace cv;
+        
+
+  
+
+        cout << "Hello World:" << current_working_directory() << endl;
+
+        Mat src = imread(current_working_directory()+ "\\GAMES101.jpg", IMREAD_COLOR);
+
+        if (src.empty()) {
+            cout << "图片未能打开";
+        }
+        namedWindow("GAMES101", WINDOW_AUTOSIZE);
+        imshow("GAMES101", src);
+        waitKey(0);
+        destroyAllWindows();
+
+        return 0;
+
+      
+	}
 }
 
 // 运行程序: Ctrl + F5 或调试 >“开始执行(不调试)”菜单
