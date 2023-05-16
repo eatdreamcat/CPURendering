@@ -12,7 +12,9 @@ void GPUDevice::CreateFrameBuffers()
 	}
 
 	m_BufferPtr = new Mat[2];
-	m_BufferPtr[0] = 
+	m_BufferPtr[0] = imread(current_working_directory() + "\\GAMES101_back.jpg", IMREAD_COLOR);
+	m_BufferPtr[1] = imread(current_working_directory() + "\\GAMES101_front.jpg", IMREAD_COLOR);
+
 }
 
 void GPUDevice::WaitForGpu()

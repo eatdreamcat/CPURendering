@@ -4,13 +4,6 @@
 #include "stdafx.h"
 
 
-std::string current_working_directory()
-{
-    char buff[512];
-    _getcwd(buff, 512);
-    std::string current_working_directory(buff);
-    return current_working_directory;// .substr(0, current_working_directory.rfind("\\"));
-}
 
 int main()
 {
@@ -22,7 +15,9 @@ int main()
 
      
 
-        Mat src = imread(current_working_directory()+ "\\GAMES101.jpg", IMREAD_COLOR);
+        Mat src = imread(current_working_directory()+ "\\GAMES101_front.jpg", IMREAD_COLOR);
+
+        Mat src2 = imread(current_working_directory() + "\\GAMES101_back.jpg", IMREAD_COLOR);
         cout << "Hello World:" << src.size[0] << "," << src.size[1] << endl;
 
         if (src.empty()) {
@@ -31,6 +26,12 @@ int main()
         namedWindow("GAMES101", WINDOW_NORMAL);
         resizeWindow("GAMES101", width, width * src.size[0]/ src.size[1]);
         imshow("GAMES101", src);
+        waitKey(0);
+        imshow("GAMES101", src2);
+        waitKey(0);
+        imshow("GAMES101", src);
+        waitKey(0);
+        imshow("GAMES101", src2);
         waitKey(0);
         destroyAllWindows();
 
