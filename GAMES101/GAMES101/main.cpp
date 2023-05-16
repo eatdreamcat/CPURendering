@@ -1,9 +1,7 @@
 ﻿// GAMES101.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
 //
 
-#include <iostream>
-#include<opencv.hpp>
-#include <direct.h>
+#include "stdafx.h"
 
 
 std::string current_working_directory()
@@ -18,19 +16,20 @@ int main()
 {
 	{
 		using namespace std;
-		using namespace cv;
         
-
+        auto width = 1280;
   
 
-        cout << "Hello World:" << current_working_directory() << endl;
+     
 
         Mat src = imread(current_working_directory()+ "\\GAMES101.jpg", IMREAD_COLOR);
+        cout << "Hello World:" << src.size[0] << "," << src.size[1] << endl;
 
         if (src.empty()) {
             cout << "图片未能打开";
         }
-        namedWindow("GAMES101", WINDOW_AUTOSIZE);
+        namedWindow("GAMES101", WINDOW_NORMAL);
+        resizeWindow("GAMES101", width, width * src.size[0]/ src.size[1]);
         imshow("GAMES101", src);
         waitKey(0);
         destroyAllWindows();
