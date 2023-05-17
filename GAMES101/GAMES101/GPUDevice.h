@@ -6,20 +6,25 @@
 class GPUDevice
 {
 public :
-	enum BufferCount {
-		Double,
-		Default = Double
+	enum DepthBit {
+		None,
+		_8Bit,
+		_16Bit,
+		_32Bit
 	};
 
 	GPUDevice();
-	void CreateFrameBuffers();
+	void CreateFrameBuffers(UINT width, UINT height, DepthBit depthBit = DepthBit::None);
 	void WaitForGpu();
 	void Present();
+	void InitWindow(const String& windowName);
 
 	~GPUDevice();
 private:
-	Mat* m_BufferPtr;
+	void Release();
+	Mat** m_BufferPtrs;
 	int m_CurrentBackBufferIndex;
 	float m_AspectRatio;
+	String m_WindowName;
 };
 

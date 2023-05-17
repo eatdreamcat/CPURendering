@@ -1,24 +1,31 @@
 #include "GPUDevice.h"
 
-GPUDevice::GPUDevice():m_BufferPtr(nullptr),m_CurrentBackBufferIndex(-1)
+const int BufferCount = 2;
+GPUDevice::GPUDevice():m_BufferPtrs(nullptr),m_CurrentBackBufferIndex(-1), m_WindowName("")
 {
 }
 
-void GPUDevice::CreateFrameBuffers()
+void GPUDevice::CreateFrameBuffers(UINT width, UINT height, DepthBit depthBit)
 {
-	if (m_BufferPtr != nullptr) {
-		delete m_BufferPtr;
-		m_BufferPtr = nullptr;
-	}
+	Release();
 
-	m_BufferPtr = new Mat[2];
-	m_BufferPtr[0] = imread(current_working_directory() + "\\GAMES101_back.jpg", IMREAD_COLOR);
-	m_BufferPtr[1] = imread(current_working_directory() + "\\GAMES101_front.jpg", IMREAD_COLOR);
+	m_BufferPtrs = new Mat* [BufferCount];
+	m_BufferPtrs[0] = new Mat(width, height, IMREAD_COLOR);
+	m_BufferPtrs[0]->setTo(-128);
+	m_BufferPtrs[1] = new Mat(width, height, IMREAD_COLOR);
+	m_BufferPtrs[1]->setTo(128);
+	m_CurrentBackBufferIndex = 0;
 
 }
 
 void GPUDevice::WaitForGpu()
 {
+}
+
+void GPUDevice::InitWindow(const String& windowName)
+{
+	m_WindowName = windowName;
+	namedWindow(windowName, WINDOW_NORMAL);
 }
 
 void GPUDevice::Present()
@@ -27,13 +34,34 @@ void GPUDevice::Present()
 		return;
 	}
 
+	auto backBuffer = *m_BufferPtrs[m_CurrentBackBufferIndex];
+	imshow(m_WindowName, backBuffer);
+
+	m_CurrentBackBufferIndex = (m_CurrentBackBufferIndex + 1) % 2;
 
 }
 
 GPUDevice::~GPUDevice()
 {
-	if (m_BufferPtr != nullptr) {
-		delete m_BufferPtr;
-		m_BufferPtr = nullptr;
+	Release();
+}
+
+void GPUDevice::Release()
+{
+
+	if (m_BufferPtrs != nullptr) {
+		auto i = 0;
+		while (i < BufferCount)
+		{
+			if (m_BufferPtrs[i] != nullptr) {
+				delete m_BufferPtrs[i];
+				m_BufferPtrs[i] = nullptr;
+			}
+
+			++i;
+		}
+
+		delete []m_BufferPtrs;
+		m_BufferPtrs = nullptr;
 	}
 }

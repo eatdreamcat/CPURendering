@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-
+#include "GPUDevice.h"
 
 
 int main()
@@ -11,34 +11,36 @@ int main()
 		using namespace std;
         
         auto width = 1280;
+        auto height = 720;
   
+        GPUDevice gpu;
 
-     
+        gpu.InitWindow("GAMES101");
 
-        Mat src = imread(current_working_directory()+ "\\GAMES101_front.jpg", IMREAD_COLOR);
+        gpu.CreateFrameBuffers(width, height);
 
-        Mat src2 = imread(current_working_directory() + "\\GAMES101_back.jpg", IMREAD_COLOR);
-        cout << "Hello World:" << src.size[0] << "," << src.size[1] << endl;
-
-        if (src.empty()) {
-            cout << "图片未能打开";
-        }
-        namedWindow("GAMES101", WINDOW_NORMAL);
-        resizeWindow("GAMES101", width, width * src.size[0]/ src.size[1]);
-        imshow("GAMES101", src);
+        gpu.Present();
         waitKey(0);
-        imshow("GAMES101", src2);
+        gpu.Present();
         waitKey(0);
-        imshow("GAMES101", src);
+        gpu.Present();
         waitKey(0);
-        imshow("GAMES101", src2);
+        gpu.Present();
         waitKey(0);
         destroyAllWindows();
 
-        return 0;
-
-      
+       /* auto p = new int*[2];
+        p[0] = new int;
+        p[1] = new int;
+        delete p[0];
+        delete p[1];
+        delete []p;*/
 	}
+
+    _CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_DEBUG);
+    _CrtDumpMemoryLeaks();
+
+    return 0;
 }
 
 // 运行程序: Ctrl + F5 或调试 >“开始执行(不调试)”菜单

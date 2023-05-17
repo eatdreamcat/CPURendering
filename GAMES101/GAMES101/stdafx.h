@@ -3,6 +3,24 @@
 #include<opencv.hpp>
 #include <direct.h>
 
+#define _CRTDBG_MAP_ALLOC
+#define _CRTDBG_LEAK_CHECK_DF
+#include <stdlib.h>
+
+#ifdef _DEBUG
+#define DEBUG_CLIENTBLOCK   new( _CLIENT_BLOCK, __FILE__, __LINE__)
+#else
+#define DEBUG_CLIENTBLOCK
+#endif
+
+#define _CRTDBG_MAP_ALLOC
+#include <crtdbg.h>
+
+
+#ifdef _DEBUG
+#define new DEBUG_CLIENTBLOCK
+#endif
+
 
 using namespace cv;
 
