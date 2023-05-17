@@ -8,6 +8,7 @@
 int main()
 {
 	{
+
 		using namespace std;
         
         auto width = 1280;
@@ -15,18 +16,31 @@ int main()
   
         GPUDevice gpu;
 
+      
+
+       
         gpu.InitWindow("GAMES101");
+        gpu.CreateFrameBuffers(height, width);
 
-        gpu.CreateFrameBuffers(width, height);
+        auto keyCode = 0;
 
-        gpu.Present();
-        waitKey(0);
-        gpu.Present();
-        waitKey(0);
-        gpu.Present();
-        waitKey(0);
-        gpu.Present();
-        waitKey(0);
+       
+
+        while (keyCode != 27) {
+           
+             
+             gpu.BeforeRendering();
+             gpu.Clear();
+             gpu.OnRendering();
+             gpu.Present();
+             keyCode = pollKey();
+
+        }
+
+       /* gpu.BeforeRendering();
+        gpu.OnRendering();
+        gpu.Present();*/
+        waitKey();
         destroyAllWindows();
 
        /* auto p = new int*[2];

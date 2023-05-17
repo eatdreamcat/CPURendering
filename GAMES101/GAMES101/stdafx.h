@@ -1,7 +1,13 @@
 #pragma once
 #include <iostream>
 #include<opencv.hpp>
+#include <opencv2/core/opengl.hpp>
 #include <direct.h>
+#include <time.h>
+#include <cmath>
+
+#include <wrl.h>
+#include <shellapi.h>
 
 #define _CRTDBG_MAP_ALLOC
 #define _CRTDBG_LEAK_CHECK_DF

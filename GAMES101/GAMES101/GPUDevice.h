@@ -17,14 +17,22 @@ public :
 	void CreateFrameBuffers(UINT width, UINT height, DepthBit depthBit = DepthBit::None);
 	void WaitForGpu();
 	void Present();
+	void Clear();
+	void BeforeRendering();
+	void OnRendering();
 	void InitWindow(const String& windowName);
+
+	Mat* BackBuffer();
+	Mat* FrontBuffer();
 
 	~GPUDevice();
 private:
 	void Release();
 	Mat** m_BufferPtrs;
-	int m_CurrentBackBufferIndex;
+	bool m_IsFirstBackBuffer;
 	float m_AspectRatio;
 	String m_WindowName;
+	float m_FPS;
+	long m_LastClock;
 };
 
