@@ -1,7 +1,7 @@
 #pragma once
 #include"stdafx.h"
 
-
+#include "RenderingThread.h"
 
 class GPUDevice
 {
@@ -34,5 +34,6 @@ private:
 	String m_WindowName;
 	float m_FPS;
 	long m_LastClock;
+	RenderingThread m_RenderingThread;
 };
 

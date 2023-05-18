@@ -8,7 +8,7 @@ GPUDevice::GPUDevice():
 	m_FPS(0), 
 	m_LastClock(0)
 {
-
+	RenderingThread m_RenderingThread;
 }
 
 void GPUDevice::CreateFrameBuffers(UINT width, UINT height, DepthBit depthBit)
@@ -54,7 +54,7 @@ void GPUDevice::Present()
 	
 
 	auto backBuffer = *BackBuffer();
-	imshow(m_WindowName, backBuffer);
+	//imshow(m_WindowName, backBuffer);
 	putText(backBuffer,  "FPS:" + std::to_string(m_FPS), Point(40, 50), FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 0), 2);
 	imshow(m_WindowName, backBuffer);
 
@@ -70,7 +70,13 @@ void GPUDevice::Clear()
 
 void GPUDevice::OnRendering()
 {
-	WaitForSingleObject(nullptr, 16.66666);
+	//m_RenderingThread.DispatchWork(1);
+
+
+
+
+
+
 }
 
 void GPUDevice::BeforeRendering()

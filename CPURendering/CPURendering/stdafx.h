@@ -9,6 +9,8 @@
 #include <wrl.h>
 #include <shellapi.h>
 
+#include <vector>
+
 #define _CRTDBG_MAP_ALLOC
 #define _CRTDBG_LEAK_CHECK_DF
 #include <stdlib.h>

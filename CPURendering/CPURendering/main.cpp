@@ -64,13 +64,15 @@ int main()
 
         const int threadCount = 10;
         thread t[threadCount];
+        
 
         atomic<UINT> n = 0;
+        atomic<UINT> complete = 0;
         atomic<bool> flag = false;
         std::mutex kMutex;
        
         for (int i = 0; i < threadCount; ++i) {
-            t[i] = thread([&n, &flag, &kMutex](int index){
+            t[i] = thread([&n, &flag, &kMutex, &complete](int index){
 
                
                 for (int j = 0; j < 10000000; j++) {
@@ -87,13 +89,17 @@ int main()
                     }
                 }
 
+                ++complete;
+
                 }, i);
+            t[i].detach();
         }
 
-        for (int i = 0; i < threadCount; ++i) {
-            t[i].join();
-        }
-      
+        thread wait = thread([&complete,&threadCount]() {
+            while (complete < threadCount);
+        });
+       
+        wait.join();
         cout << "cost:" << clock() - start << ", value:" << n << endl;
        
 
