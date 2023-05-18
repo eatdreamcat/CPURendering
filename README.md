@@ -6,7 +6,7 @@
 
 https://github.com/eatdreamcat/GAMES101Homework/releases/tag/2023.5.15
 
-## 2023.5.17
+## 2023.5.17 双Buffer，FPS，Clear
 
 为了能更好的模拟CPU跟GPU的交互
 我创建了GPUDevice类
