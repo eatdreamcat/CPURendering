@@ -77,3 +77,7 @@ https://github.com/eatdreamcat/CPURendering/releases/tag/2023.5.17
 ```
 
 写以上这些代码，也只是想初步认识下C++的多线程，至于后面Rendering的时候会不会遇到这种问题再看吧。。。
+
+
+https://github.com/eatdreamcat/CPURendering/releases/tag/2023.5.18
+
