@@ -1,4 +1,4 @@
-# GAMES101Homework
+# CPU Rendering
 
 ## 2023.5.15 项目创建
 
