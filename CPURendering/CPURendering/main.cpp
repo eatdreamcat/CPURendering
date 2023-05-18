@@ -1,4 +1,4 @@
-﻿// GAMES101.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
+﻿// Cpu Rendering.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
 //
 
 #include "stdafx.h"
@@ -19,7 +19,7 @@ int main()
       
 
        
-        gpu.InitWindow("GAMES101");
+        gpu.InitWindow("Cpu Rendering");
         gpu.CreateFrameBuffers(height, width);
 
         auto keyCode = 0;

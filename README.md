@@ -4,7 +4,7 @@
 
 主要是搭建了Opencv的环境
 
-https://github.com/eatdreamcat/GAMES101Homework/releases/tag/2023.5.15
+https://github.com/eatdreamcat/CPURendering/releases/tag/2023.5.15
 
 ## 2023.5.17 双Buffer，FPS，Clear
 
@@ -15,4 +15,4 @@ https://github.com/eatdreamcat/GAMES101Homework/releases/tag/2023.5.15
 TODO：
  用多线程来模拟
 
-https://github.com/eatdreamcat/GAMES101Homework/releases/tag/2023.5.17
+https://github.com/eatdreamcat/CPURendering/releases/tag/2023.5.17
