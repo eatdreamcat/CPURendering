@@ -25,9 +25,7 @@ void GPUDevice::CreateFrameBuffers(UINT width, UINT height, DepthBit depthBit)
 
 }
 
-void GPUDevice::WaitForGpu()
-{
-}
+
 
 void GPUDevice::InitWindow(const String& windowName)
 {
@@ -74,7 +72,39 @@ void GPUDevice::OnRendering()
 
 
 
+	auto renderTarget = *BackBuffer();
 
+	std::vector<float> vertices;
+
+	vertices.push_back(0.0f);
+	vertices.push_back(0.5f);
+	vertices.push_back(0.0f);
+
+	vertices.push_back(0.5f);
+	vertices.push_back(-0.5f);
+	vertices.push_back(0.0f);
+
+	vertices.push_back(-0.5f);
+	vertices.push_back(-0.5f);
+	vertices.push_back(0.0f);
+
+	std::vector<int> indices;
+
+	indices.push_back(0);
+	indices.push_back(3);
+	indices.push_back(6);
+
+
+	
+	
+
+	/*
+	* 1.对于任意一条扫描线，它和某条边的交点为上一次扫描线和该边的交点加上一个跟边斜率相关的偏移。
+	* 2.每条边上下端点的值是固定的，上端点y坐标减下端点y坐标为该边在屏幕上的跨度，当扫描线扫描完整个跨度后，就不再和该边相交。
+	* 3.对于第二条中不会再相交的边，扫描线会和该边相邻接的下一条边相交，而交点位置的x值为这条边上端点的x。
+	* 参考 https://zhuanlan.zhihu.com/p/96824553
+	*/
+	// TODO: 扫描线
 
 
 }

@@ -37,6 +37,7 @@ int main()
 
             gpu.BeforeRendering();
             gpu.Clear();
+
             gpu.OnRendering();
             gpu.Present();
             keyCode = pollKey();

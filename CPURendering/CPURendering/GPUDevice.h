@@ -15,7 +15,6 @@ public :
 
 	GPUDevice();
 	void CreateFrameBuffers(UINT width, UINT height, DepthBit depthBit = DepthBit::None);
-	void WaitForGpu();
 	void Present();
 	void Clear();
 	void BeforeRendering();
