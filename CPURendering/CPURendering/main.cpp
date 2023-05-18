@@ -4,52 +4,101 @@
 #include "stdafx.h"
 #include "GPUDevice.h"
 
+#ifndef RUN_TIME
+#define RUN_TIME 1
+#endif // !RUN_TIME
+
 
 int main()
 {
-	{
 
-		using namespace std;
-        
+#if RUN_TIME
+    {
+
+        using namespace std;
+
         auto width = 1280;
         auto height = 720;
-  
+
         GPUDevice gpu;
 
-      
 
-       
+
+
         gpu.InitWindow("Cpu Rendering");
         gpu.CreateFrameBuffers(height, width);
 
         auto keyCode = 0;
 
-       
+
 
         while (keyCode != 27) {
-           
-             
-             gpu.BeforeRendering();
-             gpu.Clear();
-             gpu.OnRendering();
-             gpu.Present();
-             keyCode = pollKey();
+
+
+            gpu.BeforeRendering();
+            gpu.Clear();
+            gpu.OnRendering();
+            gpu.Present();
+            keyCode = pollKey();
 
         }
 
-       /* gpu.BeforeRendering();
-        gpu.OnRendering();
-        gpu.Present();*/
+        /* gpu.BeforeRendering();
+         gpu.OnRendering();
+         gpu.Present();*/
         waitKey();
         destroyAllWindows();
 
-       /* auto p = new int*[2];
-        p[0] = new int;
-        p[1] = new int;
-        delete p[0];
-        delete p[1];
-        delete []p;*/
-	}
+        /* auto p = new int*[2];
+         p[0] = new int;
+         p[1] = new int;
+         delete p[0];
+         delete p[1];
+         delete []p;*/
+    }
+#else
+    {
+        using namespace std;
+
+        auto start = clock();
+
+        const int threadCount = 10;
+        thread t[threadCount];
+
+        atomic<UINT> n = 0;
+        atomic<bool> flag = false;
+        std::mutex kMutex;
+       
+        for (int i = 0; i < threadCount; ++i) {
+            t[i] = thread([&n, &flag, &kMutex](int index){
+
+               
+                for (int j = 0; j < 10000000; j++) {
+                    n++;    
+                    {
+                        if (!flag) {
+                            std::lock_guard<std::mutex> lock(kMutex);
+                            if (n == 999999) {
+                                flag = true;
+                                n++;
+
+                            }
+                        }
+                    }
+                }
+
+                }, i);
+        }
+
+        for (int i = 0; i < threadCount; ++i) {
+            t[i].join();
+        }
+      
+        cout << "cost:" << clock() - start << ", value:" << n << endl;
+       
+
+    }
+#endif
 
     _CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_DEBUG);
     _CrtDumpMemoryLeaks();

@@ -5,7 +5,7 @@
 #include <direct.h>
 #include <time.h>
 #include <cmath>
-
+#include <thread>
 #include <wrl.h>
 #include <shellapi.h>
 
