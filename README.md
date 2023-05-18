@@ -18,7 +18,7 @@ TODO：
 https://github.com/eatdreamcat/CPURendering/releases/tag/2023.5.17
 
 
-## 2023.5.18 多线程
+## 2023.5.18 多线程学习
 
 今天计划先支持一下多线程需求，后面可能会用来模拟GPU对屏幕分块执行的过程
 这里遇到一个问题，代码如下：
