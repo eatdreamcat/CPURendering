@@ -16,12 +16,12 @@ void GPUDevice::CreateFrameBuffers(UINT width, UINT height, DepthBit depthBit)
 	Release();
 
 	m_BufferPtrs = new Mat* [BufferCount];
-	m_BufferPtrs[0] = new Mat (width, height, IMREAD_COLOR);
-	m_BufferPtrs[0]->setTo(-128);
+	m_BufferPtrs[0] = new Mat (width, height, CV_8UC3);
+	m_BufferPtrs[0]->setTo(0);
 	m_IsFirstBackBuffer = true;
 
-	m_BufferPtrs[1] = new Mat(width, height, IMREAD_COLOR);
-	m_BufferPtrs[1]->setTo(128);
+	m_BufferPtrs[1] = new Mat(width, height, CV_8UC3);
+	m_BufferPtrs[1]->setTo(256);
 
 }
 
@@ -53,7 +53,7 @@ void GPUDevice::Present()
 
 	auto backBuffer = *BackBuffer();
 	//imshow(m_WindowName, backBuffer);
-	putText(backBuffer,  "FPS:" + std::to_string(m_FPS), Point(40, 50), FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 0), 2);
+	putText(backBuffer,  "FPS:" + std::to_string(m_FPS), Point(40, 50), FONT_HERSHEY_SIMPLEX, 1.0, Scalar(255, 255, 255), 2);
 	imshow(m_WindowName, backBuffer);
 
 	m_IsFirstBackBuffer = !m_IsFirstBackBuffer;
@@ -94,7 +94,56 @@ void GPUDevice::OnRendering()
 	indices.push_back(3);
 	indices.push_back(6);
 
+	struct line {
+		float x0;
+		float y0;
+		float x1;
+		float y1;
+	};
 
+	int trangleCount = indices.size() / 3;
+	for (int trangleIndex = 0; trangleIndex < trangleCount; ++trangleIndex) {
+
+		auto range = (trangleIndex + 1) * 3;
+		for (int i = trangleIndex * 3; i < range; ++i) {
+
+			auto pointAIndex = indices[i];
+			auto pointBIndex = indices[(i + 1) % range];
+
+			line l = {
+				vertices[pointAIndex] * 0.5f + 0.5f, vertices[pointAIndex + 1] * 0.5f + 0.5f,
+				vertices[pointBIndex] * 0.5f + 0.5f, vertices[pointBIndex + 1] * 0.5f + 0.5f,
+			};
+			
+			// TODO : x1 - x0 == 0 ? 
+			auto k = (l.y1 - l.y0) / (l.x1 - l.x0);
+			auto b = l.y0 - k * l.x0;
+
+			int yStart = min(l.y0, l.y1) * renderTarget.rows;
+			int yEnd = max(l.y0, l.y1) * renderTarget.rows;
+
+			int xStart = min(l.x0, l.x1) * renderTarget.cols;
+			xStart *= renderTarget.channels();
+			int xEnd = max(l.x0, l.x1) * renderTarget.cols;
+			xEnd *= renderTarget.channels();
+			
+			//for (int y = yStart; y <= yEnd; ++y) {
+			//	auto row_ptr = renderTarget.ptr<char>(y);
+			//	for (int x = xStart; x <= xEnd; x += renderTarget.channels()) {
+			//		// BGR -> [0,1,2] 
+			//		row_ptr[x+1] = (char)128;
+			//	}
+			//}
+
+			for (int x = xStart; x <= xEnd; x += renderTarget.channels()) {
+				int y = x * k + b;
+				if (y >= renderTarget.rows || y <= 0) continue;
+				std::cout << "x:"<< x << ",y:" << y << ", k:" << k << ",b:" << b << std::endl;
+				auto row_ptr = renderTarget.ptr<char>(y);
+				row_ptr[x + 1] = (char)128;
+			}
+		}
+	}
 	
 	
 

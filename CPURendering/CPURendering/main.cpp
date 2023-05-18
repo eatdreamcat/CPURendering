@@ -41,12 +41,15 @@ int main()
             gpu.OnRendering();
             gpu.Present();
             keyCode = pollKey();
-
+        
         }
 
-        /* gpu.BeforeRendering();
-         gpu.OnRendering();
-         gpu.Present();*/
+      /*  gpu.BeforeRendering();
+        gpu.Clear();
+
+        gpu.OnRendering();
+        gpu.Present();*/
+
         waitKey();
         destroyAllWindows();
 
