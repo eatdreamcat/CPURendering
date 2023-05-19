@@ -1,6 +1,6 @@
 #pragma once
 #include"stdafx.h"
-
+#include "Geometry.h"
 #include "RenderingThread.h"
 
 class GPUDevice
@@ -18,7 +18,9 @@ public :
 	void Present();
 	void Clear();
 	void BeforeRendering();
-	void OnRendering();
+	void Draw();
+	void DrawCoordianteAxis();
+	void DrawLineWithSlop(const VertexBuffer& vbo);
 	void InitWindow(const String& windowName);
 
 	Mat* BackBuffer();
@@ -29,6 +31,7 @@ private:
 	void Release();
 	Mat** m_BufferPtrs;
 	bool m_IsFirstBackBuffer;
+	/* the ratio of (height / width) */
 	float m_AspectRatio;
 	String m_WindowName;
 	float m_FPS;

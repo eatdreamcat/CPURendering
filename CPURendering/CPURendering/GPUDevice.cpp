@@ -11,18 +11,19 @@ GPUDevice::GPUDevice():
 	RenderingThread m_RenderingThread;
 }
 
-void GPUDevice::CreateFrameBuffers(UINT width, UINT height, DepthBit depthBit)
+void GPUDevice::CreateFrameBuffers(UINT rows, UINT cols, DepthBit depthBit)
 {
 	Release();
 
 	m_BufferPtrs = new Mat* [BufferCount];
-	m_BufferPtrs[0] = new Mat (width, height, CV_8UC3);
+	m_BufferPtrs[0] = new Mat(rows, cols, CV_8UC3);
 	m_BufferPtrs[0]->setTo(0);
 	m_IsFirstBackBuffer = true;
 
-	m_BufferPtrs[1] = new Mat(width, height, CV_8UC3);
+	m_BufferPtrs[1] = new Mat(rows, cols, CV_8UC3);
 	m_BufferPtrs[1]->setTo(256);
 
+	m_AspectRatio = (float)rows / (float)cols;
 }
 
 
@@ -62,90 +63,59 @@ void GPUDevice::Present()
 
 void GPUDevice::Clear()
 {
-	BackBuffer()->setTo(-128);
+	BackBuffer()->setTo(0);
 	imshow(m_WindowName, *BackBuffer());
 }
 
-void GPUDevice::OnRendering()
+void GPUDevice::Draw()
 {
 	//m_RenderingThread.DispatchWork(1);
-
-
-
-	auto renderTarget = *BackBuffer();
 
 	std::vector<float> vertices;
 
 	vertices.push_back(0.0f);
-	vertices.push_back(0.5f);
+	vertices.push_back(0.5f); // A
 	vertices.push_back(0.0f);
 
 	vertices.push_back(0.5f);
-	vertices.push_back(-0.5f);
+	vertices.push_back(-0.5f); // B
 	vertices.push_back(0.0f);
 
 	vertices.push_back(-0.5f);
-	vertices.push_back(-0.5f);
+	vertices.push_back(-0.5f); // C
 	vertices.push_back(0.0f);
 
-	std::vector<int> indices;
+	vertices.push_back(-0.5f);
+	vertices.push_back(0.5f); // D
+	vertices.push_back(0.0f);
+
+	vertices.push_back(0.5f);
+	vertices.push_back(0.5f); // E
+	vertices.push_back(0.0f);
+
+	vertices.push_back(0.0f);
+	vertices.push_back(-0.5f); // F
+	vertices.push_back(0.0f);
+
+	std::vector<unsigned int> indices;
 
 	indices.push_back(0);
 	indices.push_back(3);
 	indices.push_back(6);
 
-	struct line {
-		float x0;
-		float y0;
-		float x1;
-		float y1;
+	indices.push_back(9);
+	indices.push_back(12);
+	indices.push_back(15);
+
+	VertexBuffer vbo{
+		vertices,
+		indices,
+		VertexLayout::Vertex
 	};
 
-	int trangleCount = indices.size() / 3;
-	for (int trangleIndex = 0; trangleIndex < trangleCount; ++trangleIndex) {
+	DrawLineWithSlop(vbo);
 
-		auto range = (trangleIndex + 1) * 3;
-		for (int i = trangleIndex * 3; i < range; ++i) {
-
-			auto pointAIndex = indices[i];
-			auto pointBIndex = indices[(i + 1) % range];
-
-			line l = {
-				vertices[pointAIndex] * 0.5f + 0.5f, vertices[pointAIndex + 1] * 0.5f + 0.5f,
-				vertices[pointBIndex] * 0.5f + 0.5f, vertices[pointBIndex + 1] * 0.5f + 0.5f,
-			};
-			
-			// TODO : x1 - x0 == 0 ? 
-			auto k = (l.y1 - l.y0) / (l.x1 - l.x0);
-			auto b = l.y0 - k * l.x0;
-
-			int yStart = min(l.y0, l.y1) * renderTarget.rows;
-			int yEnd = max(l.y0, l.y1) * renderTarget.rows;
-
-			int xStart = min(l.x0, l.x1) * renderTarget.cols;
-			xStart *= renderTarget.channels();
-			int xEnd = max(l.x0, l.x1) * renderTarget.cols;
-			xEnd *= renderTarget.channels();
-			
-			//for (int y = yStart; y <= yEnd; ++y) {
-			//	auto row_ptr = renderTarget.ptr<char>(y);
-			//	for (int x = xStart; x <= xEnd; x += renderTarget.channels()) {
-			//		// BGR -> [0,1,2] 
-			//		row_ptr[x+1] = (char)128;
-			//	}
-			//}
-
-			for (int x = xStart; x <= xEnd; x += renderTarget.channels()) {
-				int y = x * k + b;
-				if (y >= renderTarget.rows || y <= 0) continue;
-				std::cout << "x:"<< x << ",y:" << y << ", k:" << k << ",b:" << b << std::endl;
-				auto row_ptr = renderTarget.ptr<char>(y);
-				row_ptr[x + 1] = (char)128;
-			}
-		}
-	}
-	
-	
+	//DrawCoordianteAxis();
 
 	/*
 	* 1.对于任意一条扫描线，它和某条边的交点为上一次扫描线和该边的交点加上一个跟边斜率相关的偏移。
@@ -156,6 +126,62 @@ void GPUDevice::OnRendering()
 	// TODO: 扫描线
 
 
+}
+
+void GPUDevice::DrawCoordianteAxis()
+{
+	auto renderTarget = *BackBuffer();
+
+	for (int i = 0; i < renderTarget.cols * renderTarget.channels(); i++) {
+		renderTarget.ptr<uchar>(renderTarget.rows / 2)[i] = (uchar)255;
+	}
+	for (int i = 0; i < renderTarget.rows; i++) {
+		auto horizonal = renderTarget.ptr<uchar>(i);
+		horizonal[renderTarget.cols * renderTarget.channels() / 2] = (uchar)255;
+		horizonal[renderTarget.cols * renderTarget.channels() / 2 + 1] = (uchar)255;
+		horizonal[renderTarget.cols * renderTarget.channels() / 2 + 2] = (uchar)255;
+	}
+}
+
+void GPUDevice::DrawLineWithSlop(const VertexBuffer& vbo)
+{
+	auto renderTarget = *BackBuffer();
+	int triangleCount = vbo.indices.size() / 3;
+	for (int triangleIndex = 0; triangleIndex < triangleCount; ++triangleIndex) {
+
+		int offset = triangleIndex * 3;
+		for (int i = 0; i < 3; ++i) {
+
+			auto pointAIndex = vbo.indices[i + offset];
+			auto pointBIndex = vbo.indices[(i + 1) % 3 + offset];
+
+			Line2D line2d = {
+				Point2D{vbo.vertice[pointAIndex] * 0.5f + 0.5f, vbo.vertice[pointAIndex + 1] * 0.5f + 0.5f},
+				Point2D{vbo.vertice[pointBIndex] * 0.5f + 0.5f, vbo.vertice[pointBIndex + 1] * 0.5f + 0.5f},
+			};
+
+			// TODO : x1 - x0 == 0 ? 
+			auto k = (line2d.end.y - line2d.start.y) / (line2d.end.x - line2d.start.x) * m_AspectRatio;
+			auto b = (line2d.start.y * renderTarget.rows - k * line2d.start.x * renderTarget.cols);
+
+			int yStart = min(line2d.start.y, line2d.end.y) * renderTarget.rows;
+			int yEnd = max(line2d.start.y, line2d.end.y) * renderTarget.rows;
+
+			int xStart = min(line2d.start.x, line2d.end.x) * renderTarget.cols;
+			xStart *= renderTarget.channels();
+			int xEnd = max(line2d.start.x, line2d.end.x) * renderTarget.cols;
+			xEnd *= renderTarget.channels();
+
+			for (int x = xStart; x <= xEnd; x += renderTarget.channels()) {
+				int y = (x * k / renderTarget.channels() + b);
+
+				//if (y >= renderTarget.rows || y < 0) continue;
+				//std::cout << "x:"<< x / renderTarget.channels() << ",y:" << y << ", k:" << k << ",b:" << b << std::endl;
+				auto row_ptr = renderTarget.ptr<uchar>(renderTarget.rows - y - 1);
+				row_ptr[x] = (uchar)255;
+			}
+		}
+	}
 }
 
 void GPUDevice::BeforeRendering()

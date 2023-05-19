@@ -176,6 +176,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Geometry.h" />
     <ClInclude Include="GPUDevice.h" />
     <ClInclude Include="RenderingThread.h" />
     <ClInclude Include="stdafx.h" />
