@@ -81,3 +81,14 @@ https://github.com/eatdreamcat/CPURendering/releases/tag/2023.5.17
 
 https://github.com/eatdreamcat/CPURendering/releases/tag/2023.5.18
 
+
+## 2023.5.19 通过y=kx+b绘制直线
+
+这个绘制线条只是测试一下，实际不能用这种方案
+一是效率问题，二是不好处理垂直x轴的线，因为此时k不存在
+
+TODO：
+使用Bresenham来画线
+使用scanline填充
+
+https://github.com/eatdreamcat/CPURendering/releases/tag/2023.5.19
