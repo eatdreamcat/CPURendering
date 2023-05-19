@@ -119,6 +119,10 @@ void GPUDevice::Draw()
 	indices.push_back(15);
 	indices.push_back(3);
 
+	indices.push_back(3);
+	indices.push_back(15);
+	indices.push_back(6);
+
 	VertexBuffer vbo{
 		vertices,
 		indices,
