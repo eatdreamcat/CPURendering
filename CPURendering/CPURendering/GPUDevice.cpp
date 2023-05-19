@@ -74,27 +74,27 @@ void GPUDevice::Draw()
 	std::vector<float> vertices;
 
 	vertices.push_back(0.0f);
-	vertices.push_back(0.5f); // A
+	vertices.push_back(0.5f); // A 0 
 	vertices.push_back(0.0f);
 
 	vertices.push_back(0.5f);
-	vertices.push_back(-0.5f); // B
+	vertices.push_back(-0.5f); // B 3 
 	vertices.push_back(0.0f);
 
 	vertices.push_back(-0.5f);
-	vertices.push_back(-0.5f); // C
+	vertices.push_back(-0.5f); // C 6
 	vertices.push_back(0.0f);
 
 	vertices.push_back(-0.5f);
-	vertices.push_back(0.5f); // D
+	vertices.push_back(0.5f); // D 9
 	vertices.push_back(0.0f);
 
 	vertices.push_back(0.5f);
-	vertices.push_back(0.5f); // E
+	vertices.push_back(0.5f); // E 12
 	vertices.push_back(0.0f);
 
 	vertices.push_back(0.0f);
-	vertices.push_back(-0.5f); // F
+	vertices.push_back(-0.5f); // F 15
 	vertices.push_back(0.0f);
 
 	std::vector<unsigned int> indices;
@@ -106,6 +106,18 @@ void GPUDevice::Draw()
 	indices.push_back(9);
 	indices.push_back(12);
 	indices.push_back(15);
+
+	indices.push_back(9);
+	indices.push_back(15);
+	indices.push_back(3);
+
+	indices.push_back(9);
+	indices.push_back(12);
+	indices.push_back(3);
+
+	indices.push_back(0);
+	indices.push_back(15);
+	indices.push_back(3);
 
 	VertexBuffer vbo{
 		vertices,
@@ -160,9 +172,6 @@ void GPUDevice::DrawLineWithSlop(const VertexBuffer& vbo)
 				Point2D{vbo.vertice[pointBIndex] * 0.5f + 0.5f, vbo.vertice[pointBIndex + 1] * 0.5f + 0.5f},
 			};
 
-			// TODO : x1 - x0 == 0 ? 
-			auto k = (line2d.end.y - line2d.start.y) / (line2d.end.x - line2d.start.x) * m_AspectRatio;
-			auto b = (line2d.start.y * renderTarget.rows - k * line2d.start.x * renderTarget.cols);
 
 			int yStart = min(line2d.start.y, line2d.end.y) * renderTarget.rows;
 			int yEnd = max(line2d.start.y, line2d.end.y) * renderTarget.rows;
@@ -172,13 +181,32 @@ void GPUDevice::DrawLineWithSlop(const VertexBuffer& vbo)
 			int xEnd = max(line2d.start.x, line2d.end.x) * renderTarget.cols;
 			xEnd *= renderTarget.channels();
 
-			for (int x = xStart; x <= xEnd; x += renderTarget.channels()) {
-				int y = (x * k / renderTarget.channels() + b);
 
-				//if (y >= renderTarget.rows || y < 0) continue;
-				//std::cout << "x:"<< x / renderTarget.channels() << ",y:" << y << ", k:" << k << ",b:" << b << std::endl;
-				auto row_ptr = renderTarget.ptr<uchar>(renderTarget.rows - y - 1);
-				row_ptr[x] = (uchar)255;
+			// TODO : x1 - x0 == 0 ? 
+			bool isSlopExist = !float_equal(line2d.end.x, line2d.start.x);
+
+			float k;
+			float b;
+			
+			if (isSlopExist) {
+				k = (line2d.end.y - line2d.start.y) / (line2d.end.x - line2d.start.x) * m_AspectRatio;
+				b = (line2d.start.y * renderTarget.rows - k * line2d.start.x * renderTarget.cols);
+			}
+
+			for (int x = xStart; x <= xEnd; x += renderTarget.channels()) {
+				if (isSlopExist) {
+					int y = (x * k / renderTarget.channels() + b);
+					//if (y >= renderTarget.rows || y < 0) continue;
+					//std::cout << "x:"<< x / renderTarget.channels() << ",y:" << y << ", k:" << k << ",b:" << b << std::endl;
+					auto row_ptr = renderTarget.ptr<uchar>(renderTarget.rows - y - 1);
+					row_ptr[x] = (uchar)255;
+				}
+				else {
+					for (int y = yStart; y <= yEnd; ++y) {
+						auto row_ptr = renderTarget.ptr<uchar>(y);
+						row_ptr[x] = (uchar)255;
+					}
+				}
 			}
 		}
 	}

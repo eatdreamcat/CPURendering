@@ -33,6 +33,10 @@
 using namespace cv;
 
 #define UINT unsigned int
+inline bool float_equal(float x, float y) {
+    return std::fabs(x - y) <= std::numeric_limits<float>::epsilon();
+}
+
 
 
 inline std::string current_working_directory()
