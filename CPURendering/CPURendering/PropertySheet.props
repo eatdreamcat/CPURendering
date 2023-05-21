@@ -5,7 +5,10 @@
     <OPENCV_INCLUDE_ROOT>D:\OpenCV\opencv\build\include</OPENCV_INCLUDE_ROOT>
     <OPENCV_INCLUDE_OPENCV2>D:\OpenCV\opencv\build\include\opencv2</OPENCV_INCLUDE_OPENCV2>
     <OPENCV_LIB_X64_VC16_LIB>D:\OpenCV\opencv\build\x64\vc16\lib</OPENCV_LIB_X64_VC16_LIB>
-    <OPENCV_BIN>D:\OpenCV\opencv\build\x64\vc16\bin</OPENCV_BIN>
+    <FBX_SDK_INCLUDE>F:\githubRepo\FBX SDK 2020.3.2\include</FBX_SDK_INCLUDE>
+    <FBX_SDK_LIB_X64_RELEASE>F:\githubRepo\FBX SDK 2020.3.2\lib\vs2019\x64\release</FBX_SDK_LIB_X64_RELEASE>
+    <FBX_SDK_LIB>F:\githubRepo\FBX SDK 2020.3.2\lib</FBX_SDK_LIB>
+    <DLL_ROOT>F:\githubRepo\CPURendering\CPURendering\DLL</DLL_ROOT>
   </PropertyGroup>
   <PropertyGroup />
   <ItemDefinitionGroup />
@@ -22,8 +25,17 @@
       <Value>$(OPENCV_LIB_X64_VC16_LIB)</Value>
       <EnvironmentVariable>true</EnvironmentVariable>
     </BuildMacro>
-    <BuildMacro Include="OPENCV_BIN">
-      <Value>$(OPENCV_BIN)</Value>
+    <BuildMacro Include="FBX_SDK_INCLUDE">
+      <Value>$(FBX_SDK_INCLUDE)</Value>
+    </BuildMacro>
+    <BuildMacro Include="FBX_SDK_LIB_X64_RELEASE">
+      <Value>$(FBX_SDK_LIB_X64_RELEASE)</Value>
+    </BuildMacro>
+    <BuildMacro Include="FBX_SDK_LIB">
+      <Value>$(FBX_SDK_LIB)</Value>
+    </BuildMacro>
+    <BuildMacro Include="DLL_ROOT">
+      <Value>$(DLL_ROOT)</Value>
       <EnvironmentVariable>true</EnvironmentVariable>
     </BuildMacro>
   </ItemGroup>

@@ -8,6 +8,7 @@
 #include <thread>
 #include <wrl.h>
 #include <shellapi.h>
+#include <fbxsdk.h>
 
 #include <vector>
 

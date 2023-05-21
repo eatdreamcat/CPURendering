@@ -5,7 +5,6 @@ GPUDevice::GPUDevice():
 	m_BufferPtrs(nullptr),
 	m_IsFirstBackBuffer(false),
 	m_WindowName(""), 
-	m_FPS(0), 
 	m_LastClock(0)
 {
 	RenderingThread m_RenderingThread;
@@ -44,17 +43,18 @@ Mat* GPUDevice::FrontBuffer()
 	return m_IsFirstBackBuffer ? m_BufferPtrs[1] : m_BufferPtrs[0];;
 }
 
-void GPUDevice::Present()
+void GPUDevice::Present(Stats& stat)
 {
 
 	auto now = clock();
 
-	m_FPS = m_FPS * 0.9 + (100.0 / (now - m_LastClock + std::numeric_limits<float>::epsilon()));
+	stat.FPS = stat.FPS * 0.9 + (100.0 / (now - m_LastClock + std::numeric_limits<float>::epsilon()));
 	
 
 	auto backBuffer = *BackBuffer();
 	//imshow(m_WindowName, backBuffer);
-	putText(backBuffer,  "FPS:" + std::to_string(m_FPS), Point(40, 50), FONT_HERSHEY_SIMPLEX, 1.0, Scalar(255, 255, 255), 2);
+	putText(backBuffer,  "FPS:" + std::to_string(stat.FPS), Point(40, 50), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(255, 255, 255), 1.5);
+	putText(backBuffer, "DrawCalls:" + std::to_string(stat.DrawCalls), Point(40, 70), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(255, 255, 255), 1.5);
 	imshow(m_WindowName, backBuffer);
 
 	m_IsFirstBackBuffer = !m_IsFirstBackBuffer;
@@ -67,72 +67,29 @@ void GPUDevice::Clear()
 	imshow(m_WindowName, *BackBuffer());
 }
 
-void GPUDevice::Draw()
+void GPUDevice::Draw(const RootSignature& rootSignature, Stats& stat)
 {
 	//m_RenderingThread.DispatchWork(1);
+	++stat.DrawCalls;
+	switch (rootSignature.primitive)
+	{
+	case Primitive::Line:
+	{
+		DrawLineWithBresenham(rootSignature.vob);
+		//DrawLineWithSlop(rootSignature.vbo);
+		//DrawCoordianteAxis();
+	}
+	break;
+	case Primitive::Triangle:
+	{
 
-	std::vector<float> vertices;
 
-	vertices.push_back(0.0f);
-	vertices.push_back(0.5f); // A 0 
-	vertices.push_back(0.0f);
+	}
+	break;
 
-	vertices.push_back(0.5f);
-	vertices.push_back(-0.5f); // B 3 
-	vertices.push_back(0.0f);
-
-	vertices.push_back(-0.5f);
-	vertices.push_back(-0.5f); // C 6
-	vertices.push_back(0.0f);
-
-	vertices.push_back(-0.5f);
-	vertices.push_back(0.5f); // D 9
-	vertices.push_back(0.0f);
-
-	vertices.push_back(0.5f);
-	vertices.push_back(0.5f); // E 12
-	vertices.push_back(0.0f);
-
-	vertices.push_back(0.0f);
-	vertices.push_back(-0.5f); // F 15
-	vertices.push_back(0.0f);
-
-	std::vector<unsigned int> indices;
-
-	indices.push_back(0);
-	indices.push_back(3);
-	indices.push_back(6);
-
-	indices.push_back(9);
-	indices.push_back(12);
-	indices.push_back(15);
-
-	indices.push_back(9);
-	indices.push_back(15);
-	indices.push_back(3);
-
-	indices.push_back(9);
-	indices.push_back(12);
-	indices.push_back(3);
-
-	indices.push_back(0);
-	indices.push_back(15);
-	indices.push_back(3);
-
-	indices.push_back(3);
-	indices.push_back(15);
-	indices.push_back(6);
-
-	VertexBuffer vbo{
-		vertices,
-		indices,
-		VertexLayout::Vertex
-	};
-
-	DrawLineWithBresenham(vbo);
-
-	//DrawLineWithSlop(vbo);
-	//DrawCoordianteAxis();
+	default:
+		break;
+	}
 
 	/*
 	* 1.对于任意一条扫描线，它和某条边的交点为上一次扫描线和该边的交点加上一个跟边斜率相关的偏移。

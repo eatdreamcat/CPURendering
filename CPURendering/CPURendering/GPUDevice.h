@@ -2,6 +2,13 @@
 #include"stdafx.h"
 #include "Geometry.h"
 #include "RenderingThread.h"
+#include "Stats.h"
+
+struct RootSignature
+{
+	VertexBuffer vob;
+	Primitive primitive;
+};
 
 class GPUDevice
 {
@@ -15,10 +22,10 @@ public :
 
 	GPUDevice();
 	void CreateFrameBuffers(UINT width, UINT height, DepthBit depthBit = DepthBit::None);
-	void Present();
+	void Present(Stats& stat);
 	void Clear();
 	void BeforeRendering();
-	void Draw();
+	void Draw(const RootSignature& rootSignature, Stats& stat);
 	void DrawCoordianteAxis();
 	void DrawLineWithSlop(const VertexBuffer& vbo);
 	void DrawLineWithBresenham(const VertexBuffer& vbo);
@@ -38,7 +45,6 @@ private:
 	/* the ratio of (height / width) */
 	float m_AspectRatio;
 	String m_WindowName;
-	float m_FPS;
 	long m_LastClock;
 	RenderingThread m_RenderingThread;
 };

@@ -2,7 +2,7 @@
 
 enum Primitive {
 	Line,
-	Trangle
+	Triangle
 };
 
 typedef struct Point2D

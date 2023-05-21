@@ -77,23 +77,23 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(OPENCV_INCLUDE_OPENCV2);$(OPENCV_INCLUDE_ROOT);$(IncludePath)</IncludePath>
-    <LibraryPath>$(OPENCV_LIB_X64_VC16_LIB);$(LibraryPath)</LibraryPath>
+    <IncludePath>$(OPENCV_INCLUDE_OPENCV2);$(FBX_SDK_INCLUDE);$(OPENCV_INCLUDE_ROOT);$(IncludePath)</IncludePath>
+    <LibraryPath>$(FBX_SDK_LIB_X64_RELEASE);$(OPENCV_LIB_X64_VC16_LIB);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(OPENCV_INCLUDE_OPENCV2);$(OPENCV_INCLUDE_ROOT);$(IncludePath)</IncludePath>
-    <LibraryPath>$(OPENCV_LIB_X64_VC16_LIB);$(LibraryPath)</LibraryPath>
+    <IncludePath>$(OPENCV_INCLUDE_OPENCV2);$(FBX_SDK_INCLUDE);$(OPENCV_INCLUDE_ROOT);$(IncludePath)</IncludePath>
+    <LibraryPath>$(FBX_SDK_LIB_X64_RELEASE);$(OPENCV_LIB_X64_VC16_LIB);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(OPENCV_INCLUDE_OPENCV2);$(OPENCV_INCLUDE_ROOT);$(IncludePath)</IncludePath>
-    <LibraryPath>$(OPENCV_LIB_X64_VC16_LIB);$(LibraryPath)</LibraryPath>
+    <IncludePath>$(OPENCV_INCLUDE_OPENCV2);$(FBX_SDK_INCLUDE);$(OPENCV_INCLUDE_ROOT);$(IncludePath)</IncludePath>
+    <LibraryPath>$(FBX_SDK_LIB_X64_RELEASE);$(OPENCV_LIB_X64_VC16_LIB);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(OPENCV_INCLUDE_OPENCV2);$(OPENCV_INCLUDE_ROOT);$(IncludePath)</IncludePath>
-    <LibraryPath>$(OPENCV_LIB_X64_VC16_LIB);$(LibraryPath)</LibraryPath>
+    <IncludePath>$(OPENCV_INCLUDE_OPENCV2);$(FBX_SDK_INCLUDE);$(OPENCV_INCLUDE_ROOT);$(IncludePath)</IncludePath>
+    <LibraryPath>$(FBX_SDK_LIB_X64_RELEASE);$(OPENCV_LIB_X64_VC16_LIB);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -106,7 +106,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opencv_world470d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opencv_world470d.lib;libfbxsdk.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(FBX_SDK_LIB);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -124,7 +125,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opencv_world470d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opencv_world470d.lib;libfbxsdk.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(FBX_SDK_LIB);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -138,7 +140,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opencv_world470d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opencv_world470d.lib;libfbxsdk.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(FBX_SDK_LIB);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -156,7 +159,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opencv_world470d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opencv_world470d.lib;libfbxsdk.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(FBX_SDK_LIB);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -181,6 +185,7 @@
     <ClInclude Include="RenderingThread.h" />
     <ClInclude Include="Stats.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="TestCode.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

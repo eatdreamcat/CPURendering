@@ -3,11 +3,90 @@
 
 #include "stdafx.h"
 #include "GPUDevice.h"
+#include "Stats.h"
 
 #ifndef RUN_TIME
 #define RUN_TIME 1
 #endif // !RUN_TIME
 
+#if !(RUN_TIME)
+#include "TestCode.hpp"
+#endif
+
+void CreateVBO(RootSignature& rootSignature, const FbxNodeAttribute* meshAttribute) {
+
+    
+
+}
+
+
+void TravelScene(GPUDevice& gpu, const FbxNode* node, Stats& stats) {
+
+    if (node) {
+
+        const FbxNodeAttribute* meshAttribute = nullptr;
+        // get the mesh attribute.
+        for (int i = 0; i < node->GetNodeAttributeCount(); i++) {
+            auto pAttribute = node->GetNodeAttributeByIndex(i);
+            if (!pAttribute) continue;
+
+            if (pAttribute->GetAttributeType() == FbxNodeAttribute::eMesh) {
+                meshAttribute = pAttribute;
+                break;
+            }
+        }
+           
+
+        if (meshAttribute != nullptr) {
+            RootSignature rootSignature;
+
+            CreateVBO(rootSignature, meshAttribute);
+
+            gpu.Draw(rootSignature, stats);
+
+        }
+
+        for (int i = 0; i < node->GetChildCount(); i++)
+        {
+
+        }
+    }
+}
+
+FbxNode* LoadAssets(const char* lFilename, FbxManager* lSdkManager) {
+
+    //// Change the following filename to a suitable filename value.
+    //const char* lFilename = "/Iron_Man.FBX";
+    // Initialize the SDK manager. This object handles memory management.
+   /* FbxManager* lSdkManager = FbxManager::Create();*/
+    // Create the IO settings object.
+    FbxIOSettings* ios = FbxIOSettings::Create(lSdkManager, IOSROOT);
+    lSdkManager->SetIOSettings(ios);
+    // Create an importer using the SDK manager.
+    FbxImporter* lImporter = FbxImporter::Create(lSdkManager, "");
+
+    // Use the first argument as the filename for the importer.
+    if (!lImporter->Initialize((current_working_directory() + lFilename).c_str(), -1, lSdkManager->GetIOSettings())) {
+        printf("Call to FbxImporter::Initialize() failed.\n");
+        printf("Error returned: %s\n\n", lImporter->GetStatus().GetErrorString());
+        exit(-1);
+    }
+
+    // Create a new scene so that it can be populated by the imported file.
+    FbxScene* lScene = FbxScene::Create(lSdkManager, "myScene");
+
+    // Import the contents of the file into the scene.
+    lImporter->Import(lScene);
+    // The file is imported, so get rid of the importer.
+    lImporter->Destroy();
+
+
+
+    // Print the nodes of the scene and their attributes recursively.
+    // Note that we are not printing the root node because it should
+    // not contain any attributes.
+    return lScene->GetRootNode();
+}
 
 int main()
 {
@@ -15,15 +94,24 @@ int main()
 #if RUN_TIME
     {
 
+        //// Change the following filename to a suitable filename value.
+        const char* lFilename = "/Iron_Man.FBX";
+        // Initialize the SDK manager. This object handles memory management.
+        FbxManager* lSdkManager = FbxManager::Create();
+
+        FbxNode* root = LoadAssets(lFilename, lSdkManager);
+
+        Stats stats{
+            0.0f,  // fps
+            0  // dc
+        };
+
         using namespace std;
 
         auto width = 1280;
         auto height = 720;
 
         GPUDevice gpu;
-
-
-
 
         gpu.InitWindow("Cpu Rendering");
         gpu.CreateFrameBuffers(height, width);
@@ -34,11 +122,17 @@ int main()
 
         while (keyCode != 27) {
 
-
+            // before draw
+            stats.DrawCalls = 0;
             gpu.BeforeRendering();
             gpu.Clear();
-            gpu.Draw();
-            gpu.Present();
+
+            // travel scene and draw
+            TravelScene(gpu, root, stats);
+
+            // swap back front buffer
+            gpu.Present(stats);
+
             keyCode = pollKey();
         
         }
@@ -52,6 +146,8 @@ int main()
         waitKey();
         destroyAllWindows();
 
+        lSdkManager->Destroy();
+       
         /* auto p = new int*[2];
          p[0] = new int;
          p[1] = new int;
@@ -61,50 +157,7 @@ int main()
     }
 #else
     {
-        using namespace std;
-
-        auto start = clock();
-
-        const int threadCount = 10;
-        thread t[threadCount];
-        
-
-        atomic<UINT> n = 0;
-        atomic<UINT> complete = 0;
-        atomic<bool> flag = false;
-        std::mutex kMutex;
-       
-        for (int i = 0; i < threadCount; ++i) {
-            t[i] = thread([&n, &flag, &kMutex, &complete](int index){
-
-               
-                for (int j = 0; j < 10000000; j++) {
-                    n++;    
-                    {
-                        if (!flag) {
-                            std::lock_guard<std::mutex> lock(kMutex);
-                            if (n == 999999) {
-                                flag = true;
-                                n++;
-
-                            }
-                        }
-                    }
-                }
-
-                ++complete;
-
-                }, i);
-            t[i].detach();
-        }
-
-        thread wait = thread([&complete,&threadCount]() {
-            while (complete < threadCount);
-        });
-       
-        wait.join();
-        cout << "cost:" << clock() - start << ", value:" << n << endl;
-       
+        FBX_Test();
 
     }
 #endif
