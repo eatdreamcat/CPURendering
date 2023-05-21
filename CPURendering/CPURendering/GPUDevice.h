@@ -21,6 +21,7 @@ public :
 	void Draw();
 	void DrawCoordianteAxis();
 	void DrawLineWithSlop(const VertexBuffer& vbo);
+	void DrawLineWithBresenham(const VertexBuffer& vbo);
 	void InitWindow(const String& windowName);
 
 	Mat* BackBuffer();
@@ -28,6 +29,9 @@ public :
 
 	~GPUDevice();
 private:
+	void DrawLineSlop(const Line2D& line2D);
+	void DrawLineBresenham(const Line2D& line2D);
+
 	void Release();
 	Mat** m_BufferPtrs;
 	bool m_IsFirstBackBuffer;

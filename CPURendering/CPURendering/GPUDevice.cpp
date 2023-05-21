@@ -129,8 +129,9 @@ void GPUDevice::Draw()
 		VertexLayout::Vertex
 	};
 
-	DrawLineWithSlop(vbo);
+	DrawLineWithBresenham(vbo);
 
+	//DrawLineWithSlop(vbo);
 	//DrawCoordianteAxis();
 
 	/*
@@ -212,6 +213,109 @@ void GPUDevice::DrawLineWithSlop(const VertexBuffer& vbo)
 					}
 				}
 			}
+		}
+	}
+}
+
+/*
+* 参考： https://oldj.net/article/2010/08/27/bresenham-algorithm/
+*/
+void GPUDevice::DrawLineWithBresenham(const VertexBuffer& vbo)
+{
+	auto renderTarget = *BackBuffer();
+	int triangleCount = vbo.indices.size() / 3;
+	for (int triangleIndex = 0; triangleIndex < triangleCount; ++triangleIndex) {
+
+		int offset = triangleIndex * 3;
+		for (int i = 0; i < 3; ++i) {
+
+			auto pointAIndex = vbo.indices[i + offset];
+			auto pointBIndex = vbo.indices[(i + 1) % 3 + offset];
+
+			Line2D line2d = {
+				Point2D{vbo.vertice[pointAIndex] * 0.5f + 0.5f, vbo.vertice[pointAIndex + 1] * 0.5f + 0.5f},
+				Point2D{vbo.vertice[pointBIndex] * 0.5f + 0.5f, vbo.vertice[pointBIndex + 1] * 0.5f + 0.5f},
+			};
+
+
+			int yStart = min(line2d.start.y, line2d.end.y) * renderTarget.rows;
+			int yEnd = max(line2d.start.y, line2d.end.y) * renderTarget.rows;
+			int dy = yEnd - yStart;
+
+			int xStart = min(line2d.start.x, line2d.end.x) * renderTarget.cols;
+			int xEnd = max(line2d.start.x, line2d.end.x) * renderTarget.cols;
+			int dx = xEnd - xStart;
+
+			xStart *= renderTarget.channels();
+			xEnd *= renderTarget.channels();
+
+
+			bool isSlopExist = !float_equal(line2d.end.x, line2d.start.x);
+
+			if (isSlopExist) {
+				float k = (line2d.end.y - line2d.start.y) / (line2d.end.x - line2d.start.x) * m_AspectRatio;
+				int dir = float_equal(k, 0.0f) ? 0 : abs(k) / k;
+
+				//bresenham
+				if (abs(k) > 1) {
+					// 以yi为自变量， 判断是xi还是xi+-1
+					float pi = 2 * dx - dy;
+
+					int yi = yStart;
+					int xi = dir < 0 ? xEnd : xStart;
+
+					auto row_ptr = renderTarget.ptr<uchar>(yi);
+					row_ptr[xi] = (uchar)255;
+
+					for(++yi; yi <= yEnd; ++yi)
+					{
+						row_ptr = renderTarget.ptr<uchar>(yi);
+						if (pi > 0) {
+							pi += 2 * (dx - dy);
+							xi += dir * renderTarget.channels();
+						}
+						else {
+							pi += 2 * dx;
+						}
+						row_ptr[xi] = (uchar)255;
+					}
+				}
+				else {
+				    // 以x为自变量
+					float pi = 2 * dy - dx;
+
+					int yi = dir < 0 ? renderTarget.rows - yEnd : renderTarget.rows - yStart;
+					int xi = xStart;
+
+					auto row_ptr = renderTarget.ptr<uchar>(yi);
+					row_ptr[xi] = (uchar)255;
+
+					for (xi += renderTarget.channels(); xi <= xEnd; xi += renderTarget.channels())
+					{
+						if (pi > 0) {
+							pi += 2 * (dy - dx);
+							yi -= dir;
+						}
+						else {
+							pi += 2 * dy;
+						}
+						row_ptr = renderTarget.ptr<uchar>(yi);
+						row_ptr[xi] = (uchar)255;
+					}
+				}
+			}
+			else {
+				for (int x = xStart; x <= xEnd; x += renderTarget.channels()) {
+					for (int y = yStart; y <= yEnd; ++y) {
+						auto row_ptr = renderTarget.ptr<uchar>(y);
+						row_ptr[x] = (uchar)255;
+					}
+				}
+			}
+		/*	for (int x = xStart; x <= xEnd; x += renderTarget.channels()) {
+				auto row_ptr = renderTarget.ptr<uchar>(10);
+				row_ptr[x + 2] = (uchar)255;
+			}*/
 		}
 	}
 }

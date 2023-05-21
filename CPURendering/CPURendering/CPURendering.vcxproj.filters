@@ -41,5 +41,8 @@
     <ClInclude Include="Geometry.h">
       <Filter>源文件</Filter>
     </ClInclude>
+    <ClInclude Include="Stats.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

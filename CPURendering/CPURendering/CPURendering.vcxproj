@@ -179,6 +179,7 @@
     <ClInclude Include="Geometry.h" />
     <ClInclude Include="GPUDevice.h" />
     <ClInclude Include="RenderingThread.h" />
+    <ClInclude Include="Stats.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
