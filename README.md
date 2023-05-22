@@ -99,3 +99,14 @@ https://github.com/eatdreamcat/CPURendering/releases/tag/2023.5.19
 本身是离散化以统计学的思想来做的，比如绘制的时候，x 确定下，y 只有两种可能性，因此直接判断可能性。
 
 https://github.com/eatdreamcat/CPURendering/releases/tag/2023.5.21
+
+
+## 2023.5.22 FBX加载，以及Mesh数据的获取
+
+这里只是简单的Mesh获取，递归的Traver场景，将每个Mesh的vertex跟indices设置到vbo
+TODO:
+normals，tangents，uv，vertexColor
+culling，cliping，transform
+optimization
+
+https://github.com/eatdreamcat/CPURendering/releases/tag/2023.5.22
