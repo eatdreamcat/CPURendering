@@ -55,6 +55,8 @@ void GPUDevice::Present(Stats& stat)
 	//imshow(m_WindowName, backBuffer);
 	putText(backBuffer,  "FPS:" + std::to_string(stat.FPS), Point(40, 50), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(255, 255, 255), 1.5);
 	putText(backBuffer, "DrawCalls:" + std::to_string(stat.DrawCalls), Point(40, 70), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(255, 255, 255), 1.5);
+	putText(backBuffer, "vertices:" + std::to_string(stat.vertices), Point(40, 90), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(255, 255, 255), 1.5);
+	putText(backBuffer, "triangles:" + std::to_string(stat.triangles), Point(40, 110), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(255, 255, 255), 1.5);
 	imshow(m_WindowName, backBuffer);
 
 	m_IsFirstBackBuffer = !m_IsFirstBackBuffer;
@@ -195,12 +197,12 @@ void GPUDevice::DrawLineWithBresenham(const VertexBuffer& vbo)
 			};
 
 
-			int yStart = min(line2d.start.y, line2d.end.y) * renderTarget.rows;
-			int yEnd = max(line2d.start.y, line2d.end.y) * renderTarget.rows;
+			int yStart = min(line2d.start.y, line2d.end.y) * (renderTarget.rows - 1);
+			int yEnd = max(line2d.start.y, line2d.end.y) * (renderTarget.rows - 1);
 			int dy = yEnd - yStart;
 
-			int xStart = min(line2d.start.x, line2d.end.x) * renderTarget.cols;
-			int xEnd = max(line2d.start.x, line2d.end.x) * renderTarget.cols;
+			int xStart = min(line2d.start.x, line2d.end.x) * (renderTarget.cols - 1);
+			int xEnd = max(line2d.start.x, line2d.end.x) * (renderTarget.cols - 1);
 			int dx = xEnd - xStart;
 
 			xStart *= renderTarget.channels();
@@ -244,8 +246,14 @@ void GPUDevice::DrawLineWithBresenham(const VertexBuffer& vbo)
 					int yi = dir < 0 ? renderTarget.rows - yEnd : renderTarget.rows - yStart;
 					int xi = xStart;
 
-					auto row_ptr = renderTarget.ptr<uchar>(yi);
-					row_ptr[xi] = (uchar)255;
+					uchar* row_ptr;
+					// TODO £º
+					if (yi <= yEnd) {
+						row_ptr = renderTarget.ptr<uchar>(yi);
+						row_ptr[xi] = (uchar)255;
+					}
+
+					
 
 					for (xi += renderTarget.channels(); xi <= xEnd; xi += renderTarget.channels())
 					{
@@ -256,8 +264,12 @@ void GPUDevice::DrawLineWithBresenham(const VertexBuffer& vbo)
 						else {
 							pi += 2 * dy;
 						}
-						row_ptr = renderTarget.ptr<uchar>(yi);
-						row_ptr[xi] = (uchar)255;
+
+						// TODO £º
+						if (yi <= yEnd) {
+							row_ptr = renderTarget.ptr<uchar>(yi);
+							row_ptr[xi] = (uchar)255;
+						}
 					}
 				}
 			}

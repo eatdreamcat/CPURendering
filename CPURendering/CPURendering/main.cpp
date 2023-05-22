@@ -13,34 +13,58 @@
 #include "TestCode.hpp"
 #endif
 
-void CreateVBO(RootSignature& rootSignature, const FbxNodeAttribute* meshAttribute) {
+void CreateVBO(RootSignature& rootSignature, FbxMesh* fbxMesh, int level, Stats& stats) {
 
+    if (fbxMesh->RemoveBadPolygons() < 0) return;
+
+    if (fbxMesh->GetPolygonCount() < 0) return;
+
+    const int verticesCount         { fbxMesh->GetControlPointsCount() };
+    FbxVector4* controlPoints       { fbxMesh->GetControlPoints() };
+    const int indicesCount          { fbxMesh->GetPolygonVertexCount() };
+    int* indices                    { fbxMesh->GetPolygonVertices() };
     
+    assert(verticesCount > 0 && controlPoints && indicesCount > 0 && indices);
 
+    if (!(verticesCount > 0 && controlPoints && indicesCount > 0 && indices)) return;
+
+    for (int i{ 0 }; i < verticesCount; ++i) {
+        rootSignature.vob.vertice.push_back(std::clamp((float)controlPoints[i].mData[0], -1.f, 1.f));
+        rootSignature.vob.vertice.push_back(std::clamp((float)controlPoints[i].mData[1], -1.f, 1.f));
+        rootSignature.vob.vertice.push_back(std::clamp((float)controlPoints[i].mData[2], -1.f, 1.f));
+    }
+
+    for (int i{ 0 }; i < indicesCount; ++i) {
+        rootSignature.vob.indices.push_back(indices[i]);
+    }
+
+    stats.vertices += rootSignature.vob.vertice.size();
+    stats.triangles += rootSignature.vob.indices.size() / 3;
 }
 
 
-void TravelScene(GPUDevice& gpu, const FbxNode* node, Stats& stats) {
+void TravelScene(GPUDevice& gpu, FbxNode* node, Stats& stats, int level = 0) {
 
     if (node) {
 
-        const FbxNodeAttribute* meshAttribute = nullptr;
-        // get the mesh attribute.
-        for (int i = 0; i < node->GetNodeAttributeCount(); i++) {
-            auto pAttribute = node->GetNodeAttributeByIndex(i);
-            if (!pAttribute) continue;
 
-            if (pAttribute->GetAttributeType() == FbxNodeAttribute::eMesh) {
-                meshAttribute = pAttribute;
-                break;
-            }
-        }
-           
+        if (node->GetMesh()) {
 
-        if (meshAttribute != nullptr) {
-            RootSignature rootSignature;
+            std::vector<float> vertice;
+                std::vector<unsigned int> indices;
 
-            CreateVBO(rootSignature, meshAttribute);
+            VertexBuffer vbo{
+                    vertice,
+                    indices,
+                    VertexLayout :: Vertex
+            };
+
+            RootSignature rootSignature{ 
+                vbo,
+                Primitive::Line
+            };
+
+            CreateVBO(rootSignature, node->GetMesh(), level, stats);
 
             gpu.Draw(rootSignature, stats);
 
@@ -48,7 +72,7 @@ void TravelScene(GPUDevice& gpu, const FbxNode* node, Stats& stats) {
 
         for (int i = 0; i < node->GetChildCount(); i++)
         {
-
+            TravelScene(gpu, node->GetChild(i), stats, level + 1);
         }
     }
 }
@@ -103,7 +127,9 @@ int main()
 
         Stats stats{
             0.0f,  // fps
-            0  // dc
+            0,  // dc,
+            0,// vertices
+            0// triangles
         };
 
         using namespace std;
@@ -124,6 +150,9 @@ int main()
 
             // before draw
             stats.DrawCalls = 0;
+            stats.triangles = 0;
+            stats.vertices = 0;
+
             gpu.BeforeRendering();
             gpu.Clear();
 
@@ -133,6 +162,7 @@ int main()
             // swap back front buffer
             gpu.Present(stats);
 
+            
             keyCode = pollKey();
         
         }
