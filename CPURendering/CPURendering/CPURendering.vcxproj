@@ -171,6 +171,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="matrix.cpp" />
     <ClCompile Include="RenderingThread.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -182,6 +183,7 @@
   <ItemGroup>
     <ClInclude Include="Geometry.h" />
     <ClInclude Include="GPUDevice.h" />
+    <ClInclude Include="matrix.h" />
     <ClInclude Include="RenderingThread.h" />
     <ClInclude Include="Stats.h" />
     <ClInclude Include="stdafx.h" />

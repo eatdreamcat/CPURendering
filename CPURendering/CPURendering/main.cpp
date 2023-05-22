@@ -119,7 +119,7 @@ int main()
     {
 
         //// Change the following filename to a suitable filename value.
-        const char* lFilename = "/Iron_Man.FBX";
+        const char* lFilename = "/toilet.FBX";
         // Initialize the SDK manager. This object handles memory management.
         FbxManager* lSdkManager = FbxManager::Create();
 

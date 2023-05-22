@@ -29,3 +29,4 @@ typedef struct VertexBuffer {
 	std::vector<unsigned int> indices;
 	VertexLayout layout;
 } VertexBuffer;
+

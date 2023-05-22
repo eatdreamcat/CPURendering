@@ -27,6 +27,9 @@
     <ClCompile Include="RenderingThread.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="matrix.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -46,6 +49,9 @@
     </ClInclude>
     <ClInclude Include="TestCode.hpp">
       <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="matrix.h">
+      <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
